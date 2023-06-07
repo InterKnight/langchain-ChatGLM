@@ -1,6 +1,6 @@
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.document_loaders import UnstructuredFileLoader, TextLoader
+from langchain.document_loaders import UnstructuredFileLoader, TextLoader, Docx2txtLoader
 from configs.model_config import *
 import datetime
 from textsplitter import ChineseTextSplitter
@@ -64,6 +64,10 @@ def load_file(filepath, sentence_size=SENTENCE_SIZE):
         docs = loader.load()
     elif filepath.lower().endswith(".txt"):
         loader = TextLoader(filepath, autodetect_encoding=True)
+        textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
+        docs = loader.load_and_split(textsplitter)
+    elif filepath.lower().endswith(".docx"):
+        loader = Docx2txtLoader(filepath)
         textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
         docs = loader.load_and_split(textsplitter)
     elif filepath.lower().endswith(".pdf"):
